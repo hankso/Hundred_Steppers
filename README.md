@@ -21,7 +21,7 @@ or something like `C:\Program Files\Arduino\libraries`.
 available.
 
 ## Attention
-- you need to define how steppers are driver with
+- you need to define how steppers are drivered with
 `#define driver_mode_4`(A-B-C-D) or `#define driver_mode_8`(A-AB-B-BC-C-CD-D-DA)
 
 - 74HC595 pins
@@ -31,7 +31,6 @@ available.
     - OE --> enablePin
     - MR --> clearPin
 
-![74HC595]()
-
+![74HC595](https://github.com/hankso/Hundred_Steppers/blob/master/doc/595pins.png)
 ## API
-![similar API]()
+![similar API](https://github.com/hankso/Hundred_Steppers/blob/master/doc/similar_API.png)
