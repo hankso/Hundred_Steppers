@@ -1,0 +1,30 @@
+#######################################
+# Syntax Coloring Map For Hundred_Steppers
+#######################################
+
+#######################################
+# Class (KEYWORD1)
+#######################################
+
+Hundred_Steppers	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+home	KEYWORD2
+step	KEYWORD2
+setStepperStep	KEYWORD2
+enableSteppers	KEYWORD2
+disableSteppers	KEYWORD2
+clearSteppers	KEYWORD2
+setStepperNum	KEYWORD2
+getStepperNum	KEYWORD2
+fastShiftOut	KEYWORD2
+setSpeedRevPerMin	KEYWORD2
+setSpeedRadPerSec	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+stepType LITERAL1
