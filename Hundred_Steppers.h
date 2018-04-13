@@ -35,7 +35,8 @@
 // Default it is uint8_t(only can be 0, 1, 2 or 3), you may want
 // to set int16_t to storage current step since you can use HOME
 // command to zero all motors.
-#define stepType uint8_t
+// #define stepType uint8_t
+#define stepType int
 
 #define arrayLen(array) sizeof(array)/sizeof(array[0])
 
@@ -47,19 +48,18 @@ class Hundred_Steppers
         // to simplify your hardeware and circuits.
         Hundred_Steppers(uint16_t nSteppers, uint16_t nSteps,
                          uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-                         uint8_t step_line_num),
+                         uint8_t stepper_line_num),
 
         Hundred_Steppers(uint16_t nSteppers, uint16_t nSteps,
                          uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-                         uint8_t step_line_num,
+                         uint8_t stepper_line_num,
                          uint8_t clearPin, uint8_t enablePin);
 
         void
             // control single stepper
             setStepperStep(uint16_t, int),
             // control a list of steppers
-            // int8_t varies from -128 ~ 127
-            setStepperStep(int8_t *),
+            setStepperStep(int *),
             setSpeedRevPerMin(uint16_t),
             setSpeedRadPerSec(uint16_t),
             // move all steppers towards zero
@@ -86,12 +86,13 @@ class Hundred_Steppers
     private:
         volatile uint8_t
             *dataReg,
-            *clockReg;
+            *clockReg,
+            *latchReg;
         uint8_t
-            step_line_num,
+            stepper_line_num,
             dataMask,
             clockMask,
-            latchPin,
+            latchMask,
             clearPin,
             enablePin;
         uint16_t
@@ -106,6 +107,8 @@ class Hundred_Steppers
         void
             step(uint16_t length = 0),
             fastShiftOut(uint8_t);
+        uint16_t
+            stepsToMove(int *, uint16_t);
 };
 
 #endif

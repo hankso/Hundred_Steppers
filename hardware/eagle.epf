@@ -1,0 +1,29 @@
+[Eagle]
+Version="06 06 00"
+Platform="Linux"
+Serial="62191E841E-LSR-WLM-1EL"
+Globals="Globals"
+Desktop="Desktop"
+
+[Globals]
+AutoSaveProject=1
+UsedLibrary="/home/hank/.eagle/lbr/74xx-us.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/JST_XH_Connectors.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/SparkFun-Aesthetics.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/SparkFun-Capacitors.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/SparkFun-Connectors.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/SparkFun-DigitalIC.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/headers.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/microbuilder.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/resistor.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/uln-udn.lbr"
+
+[Win_1]
+Type="Control Panel"
+Loc="267 63 1272 767"
+State=2
+Number=0
+
+[Desktop]
+Screen="1366 768"
+Window="Win_1"

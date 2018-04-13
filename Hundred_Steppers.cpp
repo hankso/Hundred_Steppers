@@ -35,7 +35,7 @@
 Hundred_Steppers::Hundred_Steppers(
         uint16_t nSteppers, uint16_t nSteps,
         uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-        uint8_t step_line_num,
+        uint8_t stepper_line_num,
         uint8_t clearPin, uint8_t enablePin)
 {
     // steppers num
@@ -55,21 +55,22 @@ Hundred_Steppers::Hundred_Steppers(
     // get pin registers pointer, these GPIO are frequently used.
     this->dataReg   = portOutputRegister(digitalPinToPort(dataPin));
     this->clockReg  = portOutputRegister(digitalPinToPort(clockPin));
+    this->latchReg  = portOutputRegister(digitalPinToPort(latchPin));
     this->dataMask  = digitalPinToBitMask(dataPin);
     this->clockMask = digitalPinToBitMask(clockPin);
+    this->latchMask = digitalPinToBitMask(latchPin);
+    *dataReg &= ~dataMask;
+    *clockReg &= ~clockMask;
+    *latchReg &= ~latchMask;
 
-    // not frequently used
-    this->latchPin = latchPin;
-    digitalWrite(latchPin, LOW);
-
-    // not necessary pins
+    // not necessary pins, also not frequently used.
     this->clearPin = clearPin;
     this->enablePin = enablePin;
     digitalWrite(clearPin, HIGH);
     digitalWrite(enablePin, LOW);
 
     this->last_step_time = micros();
-    this->step_line_num = step_line_num;
+    this->stepper_line_num = stepper_line_num;
     this->nSteps = nSteps;
 
     // default speed 60r/min
@@ -79,7 +80,7 @@ Hundred_Steppers::Hundred_Steppers(
 Hundred_Steppers::Hundred_Steppers(
         uint16_t nSteppers, uint16_t nSteps,
         uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-        uint8_t step_line_num)
+        uint8_t stepper_line_num)
 {
     this->nSteppers = nSteppers;
     this->step_table = (stepType *)calloc(nSteppers, sizeof(stepType));
@@ -88,14 +89,17 @@ Hundred_Steppers::Hundred_Steppers(
     pinMode(latchPin, OUTPUT);
     this->dataReg   = portOutputRegister(digitalPinToPort(dataPin));
     this->clockReg  = portOutputRegister(digitalPinToPort(clockPin));
+    this->latchReg  = portOutputRegister(digitalPinToPort(latchPin));
     this->dataMask  = digitalPinToBitMask(dataPin);
     this->clockMask = digitalPinToBitMask(clockPin);
-    this->latchPin = latchPin;
-    digitalWrite(latchPin, LOW);
+    this->latchMask = digitalPinToBitMask(latchPin);
+    *dataReg &= ~dataMask;
+    *clockReg &= ~clockMask;
+    *latchReg &= ~latchMask;
     this->clearPin = 0;
     this->enablePin = 0;
     this->last_step_time = micros();
-    this->step_line_num = step_line_num;
+    this->stepper_line_num = stepper_line_num;
     this->nSteps = nSteps;
     setSpeedRevPerMin(60);
 }
@@ -162,69 +166,65 @@ void Hundred_Steppers::setStepperStep(uint16_t n, int steps_to_move)
                 steps_to_move++;
                 step_table[n]--;
             }
-            step(n);
+            step(n + 1);
         }
     }
 }
 
-void Hundred_Steppers::setStepperStep(int8_t * step_list)
+void Hundred_Steppers::setStepperStep(int * stepList)
 {
     // control a list of steppers
-    uint16_t zero_num = 0;
-    uint16_t max_changed = 0;
-    uint16_t length = arrayLen(step_list);
+    uint16_t maxChanged, length = arrayLen(stepList);
     if (length > nSteppers) length = nSteppers;
 
     // loop until every steps_to_move return to zero
-    while (zero_num < length)
+    // e.g. stepList finally become {0, 0, 0...}
+    while (stepsToMove(stepList, length))
     {
-        max_changed = 0;
+        maxChanged = -1;
         for (uint16_t i = 0; i < length; i++)
         {
-            if (step_list[i] > 0)
+            if (stepList[i] > 0)
             {
-                step_list[i]--;
+                stepList[i]--;
                 step_table[i]++;
-                max_changed = i;
+                maxChanged = i;
             }
-            else if (step_list[i] < 0)
+            else if (stepList[i] < 0)
             {
-                step_list[i]++;
+                stepList[i]++;
                 step_table[i]--;
-                max_changed = i;
+                maxChanged = i;
             }
-            else
-                zero_num++;
         }
-        step(max_changed);
+        if (maxChanged == -1) { break; }
+        step(maxChanged);
     }
 }
 
 void Hundred_Steppers::home(void)
 {
-    uint16_t zero_num = 0;
-    uint16_t max_changed = 0;
+    uint16_t maxChanged;
 
     // move each steppers to zero position
-    while (zero_num < nSteppers)
+    while (true)
     {
-        max_changed = 0;
+        maxChanged = -1;
         for (uint16_t i = 0; i < nSteppers; i++)
         {
             if (step_table[i] > 0)
             {
                 step_table[i]--;
-                max_changed = i;
+                maxChanged = i;
             }
             else if (step_table[i] < 0)
             {
                 step_table[i]++;
-                max_changed = i;
+                maxChanged = i;
             }
-            else
-                zero_num++;
         }
-        step(max_changed);
+        if (maxChanged == -1) {break;}
+        step(maxChanged);
     }
 }
 
@@ -260,36 +260,32 @@ uint16_t Hundred_Steppers::getStepperNum(void)
 
 void Hundred_Steppers::step(uint16_t length)
 {
-    uint8_t cmd = 0;
+    // If only 0~9 stepper will move, then set length to 10,
+    // data for steppers after 10 will not be transferred out,
+    // this can save some time.
+    if (length == -1 || length > nSteppers)
+        length = nSteppers;
 
     // control speed
     while ((micros() - last_step_time) < step_delay) {;}
     last_step_time = micros();
 
-    // If only 0~10 stepper will move, then set length to 10,
-    // data for steppers after 10 will not be transferred out,
-    // this can save some time.
-    if (length == 0 || length > nSteppers)
-        length = nSteppers;
-
-    digitalWrite(latchPin, LOW); // wait for raising
-
-    //=====================================================
-    for (uint16_t i = 0; i <= length; i++)
+    //==========================================================================
+    for (uint16_t i = 0; i < length; i++)
     {
-        cmd = cmd_list[step_table[length - i] % driver_mode];
-        fastShiftOut(cmd);
+        fastShiftOut( cmd_list[step_table[length - i - 1] % driver_mode] );
     }
-    //=====================================================
+    //==========================================================================
 
-    digitalWrite(latchPin, HIGH); // storage data --> run steppers
-    digitalWrite(latchPin, LOW); // data is already registed, pull down
+    *latchReg |= latchMask; // storage data at raising edge --> run steppers
+    delay(5);
+    *latchReg &= ~latchMask; // data is already registed, pull down
 }
 
 
 void Hundred_Steppers::fastShiftOut(uint8_t value)
 {
-    for (uint8_t i = 0; i < step_line_num; i++)
+    for (uint8_t i = 0; i < stepper_line_num; i++)
     {
         // clock pin set LOW
         *clockReg &= ~clockMask;
@@ -300,7 +296,17 @@ void Hundred_Steppers::fastShiftOut(uint8_t value)
         else
             *dataReg &= ~dataMask;
 
-        // clock pin set HIGH (raising)
+        // clock pin set HIGH
         *clockReg |= clockMask;
     }
+}
+
+uint16_t Hundred_Steppers::stepsToMove(int * array, uint16_t length)
+{
+    uint16_t tmp = 0;
+    while (length)
+    {
+        tmp += abs(array[--length]);
+    }
+    return tmp;
 }
