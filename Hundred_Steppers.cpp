@@ -35,7 +35,7 @@
 Hundred_Steppers::Hundred_Steppers(
         uint16_t nSteppers, uint16_t nSteps,
         uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-        uint8_t stepper_line_num,
+        uint8_t stepper_line_num, uint8_t driver_mode,
         uint8_t clearPin, uint8_t enablePin)
 {
     // steppers num
@@ -73,6 +73,18 @@ Hundred_Steppers::Hundred_Steppers(
     this->stepper_line_num = stepper_line_num;
     this->nSteps = nSteps;
 
+    // driver mode
+    this->driver_mode = driver_mode;
+    if (driver_mode == 4)
+    {
+        this->cmd_list = new uint8_t[4] { B1110, B1101, B1011, B0111 };
+    }
+    else if (driver_mode == 8)
+    {
+        this->cmd_list = new uint8_t[8] { B1110, B1100, B1101, B1001,
+                                          B1011, B0011, B0111, B0110 };
+    }
+
     // default speed 60r/min
     setSpeedRevPerMin(60);
 }
@@ -80,7 +92,7 @@ Hundred_Steppers::Hundred_Steppers(
 Hundred_Steppers::Hundred_Steppers(
         uint16_t nSteppers, uint16_t nSteps,
         uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-        uint8_t stepper_line_num)
+        uint8_t stepper_line_num, uint8_t driver_mode)
 {
     this->nSteppers = nSteppers;
     this->step_table = (stepType *)calloc(nSteppers, sizeof(stepType));
@@ -101,6 +113,12 @@ Hundred_Steppers::Hundred_Steppers(
     this->last_step_time = micros();
     this->stepper_line_num = stepper_line_num;
     this->nSteps = nSteps;
+    this->driver_mode = driver_mode;
+    if (driver_mode == 4)
+    { this->cmd_list = new uint8_t[4] { B1110, B1101, B1011, B0111 }; }
+    else if (driver_mode == 8)
+    { this->cmd_list = new uint8_t[8] { B1110, B1100, B1101, B1001,
+                                        B1011, B0011, B0111, B0110 }; }
     setSpeedRevPerMin(60);
 }
 
@@ -171,10 +189,10 @@ void Hundred_Steppers::setStepperStep(uint16_t n, int steps_to_move)
     }
 }
 
-void Hundred_Steppers::setStepperStep(int * stepList)
+void Hundred_Steppers::setStepperStep(int * stepList, uint16_t length)
 {
     // control a list of steppers
-    uint16_t maxChanged, length = arrayLen(stepList);
+    uint16_t maxChanged;
     if (length > nSteppers) length = nSteppers;
 
     // loop until every steps_to_move return to zero
@@ -204,9 +222,8 @@ void Hundred_Steppers::setStepperStep(int * stepList)
 
 void Hundred_Steppers::home(void)
 {
-    uint16_t maxChanged;
-
     // move each steppers to zero position
+    uint16_t maxChanged;
     while (true)
     {
         maxChanged = -1;
@@ -304,9 +321,9 @@ void Hundred_Steppers::fastShiftOut(uint8_t value)
 uint16_t Hundred_Steppers::stepsToMove(int * array, uint16_t length)
 {
     uint16_t tmp = 0;
-    while (length)
+    for (uint16_t i=0; i < length; i++)
     {
-        tmp += abs(array[--length]);
+        tmp += abs(array[i]);
     }
     return tmp;
 }

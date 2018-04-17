@@ -7,15 +7,18 @@
 #define latchPin         4
 #define steps_per_rev    4096
 
-//#define driver_mode_4 // A-B-C-D
-#define driver_mode_8 // A-AB-B-BC-C-CD-D-DA
+//#define driver_mode 4 // A-B-C-D
+#define driver_mode 8 // A-AB-B-BC-C-CD-D-DA
 
 Hundred_Steppers s = Hundred_Steppers(steppers_num,
                                       steps_per_rev,
                                       dataPin,
                                       clockPin,
                                       latchPin,
-                                      stepper_line_num);
+                                      stepper_line_num,
+                                      driver_mode);
+
+
 String s1 = String("\n\
 ===============================================\n\
 set stepper step one by one\n\
@@ -70,8 +73,8 @@ void setup() {
     Serial.println(s2);
     Serial.print("start time(us): ");
     Serial.println(micros());
-    int step_list[5] = {+2, +1, 0, -1, -2};
-    s.setStepperStep(step_list);
+    int step_list[7] = {+2, +1, 0, -1, -2, 0, 5};
+    s.setStepperStep(step_list, 7);
     Serial.print("finish time(us): ");
     Serial.println(micros());
 
@@ -95,10 +98,11 @@ void setup() {
 void loop() {
     // put your main code here, to run repeatedly:
     Serial.println("input stepper index and steps to move(e.g. 5, 5): ");
-    while (Serial.available())
-    {
-        uint16_t index = Serial.parseInt();
-        int steps_to_move = Serial.parseInt();
-        s.setStepperStep(index, steps_to_move);
-    }
+    while (!Serial.available()) {;}
+    digitalWrite(13, HIGH);
+    uint16_t index = Serial.parseInt();
+    int steps_to_move = Serial.parseInt();
+    Serial.printf("moving stepper %d %d steps\n", index, steps_to_move);
+    s.setStepperStep(index, steps_to_move);
+    digitalWrite(13, LOW);
 }

@@ -38,7 +38,7 @@
 // #define stepType uint8_t
 #define stepType int
 
-#define arrayLen(array) sizeof(array)/sizeof(array[0])
+// #define arrayLen(array) sizeof(array)/sizeof(array[0])
 
 class Hundred_Steppers
 {
@@ -48,18 +48,18 @@ class Hundred_Steppers
         // to simplify your hardeware and circuits.
         Hundred_Steppers(uint16_t nSteppers, uint16_t nSteps,
                          uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-                         uint8_t stepper_line_num),
+                         uint8_t stepper_line_num, uint8_t driver_mode),
 
         Hundred_Steppers(uint16_t nSteppers, uint16_t nSteps,
                          uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-                         uint8_t stepper_line_num,
+                         uint8_t stepper_line_num, uint8_t driver_mode,
                          uint8_t clearPin, uint8_t enablePin);
 
         void
             // control single stepper
             setStepperStep(uint16_t, int),
             // control a list of steppers
-            setStepperStep(int *),
+            setStepperStep(int *, uint16_t),
             setSpeedRevPerMin(uint16_t),
             setSpeedRadPerSec(uint16_t),
             // move all steppers towards zero
@@ -74,15 +74,6 @@ class Hundred_Steppers
             clearSteppers(void),
             setStepperNum(uint16_t);
 
-        #if defined(driver_mode_4)
-        #define driver_mode 4
-        uint8_t cmd_list[4] = { B1110, B1101, B1011, B0111 };
-        #else
-        #define driver_mode 8
-        uint8_t cmd_list[8] = { B1110, B1100, B1101, B1001,
-                                B1011, B0011, B0111, B0110 };
-        #endif
-
     private:
         volatile uint8_t
             *dataReg,
@@ -90,11 +81,13 @@ class Hundred_Steppers
             *latchReg;
         uint8_t
             stepper_line_num,
+            driver_mode,
             dataMask,
             clockMask,
             latchMask,
             clearPin,
-            enablePin;
+            enablePin,
+            *cmd_list;
         uint16_t
             nSteppers,
             nSteps,
