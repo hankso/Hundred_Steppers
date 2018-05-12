@@ -51,7 +51,7 @@ home\n\
 
 void setup() {
     pinMode(13, OUTPUT);
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     Serial.println(s1);
     Serial.print("start time(us): ");
@@ -102,6 +102,7 @@ void loop() {
     digitalWrite(13, HIGH);
     uint16_t index = Serial.parseInt();
     int steps_to_move = Serial.parseInt();
+    Serial.readStringUntil('\n');
     Serial.printf("moving stepper %d %d steps\n", index, steps_to_move);
     s.setStepperStep(index, steps_to_move);
     digitalWrite(13, LOW);
