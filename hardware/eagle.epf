@@ -9,6 +9,7 @@ Desktop="Desktop"
 AutoSaveProject=1
 UsedLibrary="/home/hank/.eagle/lbr/74xx-us.lbr"
 UsedLibrary="/home/hank/.eagle/lbr/JST_XH_Connectors.lbr"
+UsedLibrary="/home/hank/.eagle/lbr/SRG.lbr"
 UsedLibrary="/home/hank/.eagle/lbr/SparkFun-Aesthetics.lbr"
 UsedLibrary="/home/hank/.eagle/lbr/SparkFun-Capacitors.lbr"
 UsedLibrary="/home/hank/.eagle/lbr/SparkFun-Connectors.lbr"
@@ -21,7 +22,7 @@ UsedLibrary="/home/hank/.eagle/lbr/uln-udn.lbr"
 [Win_1]
 Type="Control Panel"
 Loc="267 63 1272 767"
-State=2
+State=1
 Number=0
 
 [Desktop]
