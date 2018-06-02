@@ -145,10 +145,10 @@
 <text x="10.795" y="69.215" size="1.4224" layer="22" rot="MR0">GND</text>
 <text x="10.16" y="76.835" size="1.4224" layer="22" rot="MR0">DIN</text>
 <text x="89.535" y="76.835" size="1.4224" layer="22" rot="MR0">DOUT</text>
-<text x="89.535" y="74.295" size="1.4224" layer="22" rot="MR0">SHCP</text>
-<text x="12.065" y="74.295" size="1.4224" layer="22" rot="MR0">SHCP</text>
-<text x="12.065" y="71.755" size="1.4224" layer="22" rot="MR0">STCP</text>
-<text x="89.535" y="71.755" size="1.4224" layer="22" rot="MR0">STCP</text>
+<text x="89.535" y="74.295" size="1.4224" layer="22" rot="MR0">STCP</text>
+<text x="12.065" y="74.295" size="1.4224" layer="22" rot="MR0">STCP</text>
+<text x="12.065" y="71.755" size="1.4224" layer="22" rot="MR0">SHCP</text>
+<text x="89.535" y="71.755" size="1.4224" layer="22" rot="MR0">SHCP</text>
 </plain>
 <libraries>
 <library name="74xx-us">

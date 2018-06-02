@@ -27,6 +27,16 @@
  * current for stepper. Simply connect pins as showed above.
  *
  * Writtern by Hank @page https://github.com/hankso
+ * 
+ * +---------+-------------------------------+
+ * |color pin| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+ * +---------+-------------------------------+
+ * |red     5| H | H | H | H | H | H | H | H |
+ * |orange  4| L | L |   |   |   |   |   | L |
+ * |yellow  3|   | L | L | L |   |   |   |   |
+ * |pink    2|   |   |   | L | L | L |   |   |
+ * |blue    1|   |   |   |   |   | L | L | L |
+ * +---------+-------------------------------+
  */
 
 #include <Arduino.h>
@@ -288,20 +298,22 @@ void Hundred_Steppers::step(uint16_t length)
     last_step_time = micros();
 
     //==========================================================================
+    // the further stepper is, the earlier be set
     for (uint16_t i = 0; i < length; i++)
     {
-        fastShiftOut( cmd_list[step_table[length - i - 1] % driver_mode] );
+        fastShiftOut( ~cmd_list[step_table[length - i - 1] % driver_mode] );
     }
     //==========================================================================
 
     *latchReg |= latchMask; // storage data at raising edge --> run steppers
-    delay(5);
+    delayMicroseconds(1);
     *latchReg &= ~latchMask; // data is already registed, pull down
 }
 
 
 void Hundred_Steppers::fastShiftOut(uint8_t value)
 {
+    // LSB mode
     for (uint8_t i = 0; i < stepper_line_num; i++)
     {
         // clock pin set LOW

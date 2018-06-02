@@ -27,6 +27,16 @@
  * current for stepper. Simply connect pins as showed above.
  *
  * Writtern by Hank @page https://github.com/hankso
+ * 
+ * +---------+-------------------------------+
+ * |color pin| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+ * +---------+-------------------------------+
+ * |red     5| H | H | H | H | H | H | H | H |
+ * |orange  4| L | L |   |   |   |   |   | L |
+ * |yellow  3|   | L | L | L |   |   |   |   |
+ * |pink    2|   |   |   | L | L | L |   |   |
+ * |blue    1|   |   |   |   |   | L | L | L |
+ * +---------+-------------------------------+
  */
 
 #ifndef HUNDRED_STEPPERS_H
