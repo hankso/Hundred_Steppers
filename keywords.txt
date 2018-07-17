@@ -27,4 +27,4 @@ setSpeedRadPerSec	KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
-stepType LITERAL1
+stepType	LITERAL1
