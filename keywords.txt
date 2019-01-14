@@ -17,12 +17,13 @@ step	KEYWORD2
 setStepperStep	KEYWORD2
 enableSteppers	KEYWORD2
 disableSteppers	KEYWORD2
-clearSteppers	KEYWORD2
+clearShiftStorage	KEYWORD2
 setStepperNum	KEYWORD2
 getStepperNum	KEYWORD2
 fastShiftOut	KEYWORD2
 setSpeedRevPerMin	KEYWORD2
 setSpeedRadPerSec	KEYWORD2
+stepType	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

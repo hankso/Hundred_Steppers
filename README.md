@@ -17,13 +17,11 @@ you may find this API familiar because I name these functions similar with them.
 - Download zip file
 - Unzip in your arduino libraries directory. It can be `~/arduino/libraries`
 or something like `C:\Program Files\Arduino\libraries`.
-- open your arduino IDE and try include library, also there is an example
-available.
+- open your arduino IDE and try include library `include <Hundred_Steppers.h>`,
+also there is an [example](example/control_steppers) available.
 
-## Attention
-- you need to define how steppers are drivered with
-`#define driver_mode_4`(A-B-C-D) or `#define driver_mode_8`(A-AB-B-BC-C-CD-D-DA)
-
+## Hardware
+- There is an example hardware design available in `Eagle` format.
 - 74HC595 pins
     - ST_CP --> latchPin
     - SH_CP --> clockPin
@@ -32,5 +30,6 @@ available.
     - MR --> clearPin
 
 ![74HC595](https://github.com/hankso/Hundred_Steppers/blob/master/doc/595pins.png)
+
 ## API
 ![similar API](https://github.com/hankso/Hundred_Steppers/blob/master/doc/similar_API.png)

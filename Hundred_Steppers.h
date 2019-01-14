@@ -27,7 +27,8 @@
  * current for stepper. Simply connect pins as showed above.
  *
  * Writtern by Hank @page https://github.com/hankso
- * 
+ *
+ * Stepper `24BYJ48` pin value table
  * +---------+-------------------------------+
  * |color pin| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
  * +---------+-------------------------------+
@@ -53,17 +54,13 @@
 class Hundred_Steppers
 {
     public:
-        // constructors
         // You can connect MR to VCC and OE to GND
         // to simplify your hardeware and circuits.
         Hundred_Steppers(uint16_t nSteppers, uint16_t nSteps,
                          uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-                         uint8_t stepper_line_num, uint8_t driver_mode),
-
-        Hundred_Steppers(uint16_t nSteppers, uint16_t nSteps,
-                         uint8_t dataPin, uint8_t clockPin, uint8_t latchPin,
-                         uint8_t stepper_line_num, uint8_t driver_mode,
-                         uint8_t clearPin, uint8_t enablePin);
+                         uint8_t clearPin = -1, uint8_t enablePin = -1,
+                         uint8_t nStepperLines = 4, uint8_t driveMode = 4,
+                         uint8_t speed = 10);
 
         void
             // control single stepper
@@ -80,8 +77,8 @@ class Hundred_Steppers
             // steppers are default enabled if enablePin is offered
             enableSteppers(void),
             disableSteppers(void),
-            // this will change 74HC595 output pin into high-resist state
-            clearSteppers(void),
+            // this will clear all data in 74HC595 shift registers
+            clearShiftStorage(void),
             setStepperNum(uint16_t);
 
     private:
@@ -90,25 +87,25 @@ class Hundred_Steppers
             *clockReg,
             *latchReg;
         uint8_t
-            stepper_line_num,
-            driver_mode,
+            nStepperLines,
+            driveMode,
             dataMask,
             clockMask,
             latchMask,
             clearPin,
             enablePin,
-            *cmd_list;
+            *cmdList;
         uint16_t
             nSteppers,
             nSteps,
-            step_delay;
+            speedDelay;
         stepType
-            *step_table;
+            *stepTable;
         uint32_t
-            last_step_time;
+            lastTime;
 
         void
-            step(uint16_t length = 0),
+            doStep(uint16_t length = 0),
             fastShiftOut(uint8_t);
         uint16_t
             stepsToMove(int *, uint16_t);
