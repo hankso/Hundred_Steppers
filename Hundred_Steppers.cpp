@@ -215,11 +215,15 @@ void Hundred_Steppers::home(void)
 
 bool Hundred_Steppers::setStepperNum(uint16_t n)
 {
+    if (n <= stepTable)
+    {
+        nSteppers = n;
+        return true;
+    }
     // resize internal steps array `stepTable`
-    stepType * tmp = (stepType *)calloc(n, sizeof(stepType));
+    stepType * tmp = (stepType *)realloc(stepTable, n * sizeof(stepType));
     if (tmp)
     {
-        free(stepTable);
         stepTable = tmp;
         nSteppers = n;
         return true;

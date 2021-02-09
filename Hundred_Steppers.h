@@ -5,15 +5,15 @@
  *
  * 74HC595 pin-outs:    |     UNL2803(8 NPN darlington, 50V@500mA max):
  *       ____           |            ____
- *  Q1 -|o   |- VCC     | Q1 -- I1 -|o   |- O1
- *  Q2 -|    |- Q0      | Q2 -- I2 -|    |- O2
- *  Q3 -|    |- DS      | Q3 -- I3 -|    |- O3
- *  Q4 -|    |- OE      | Q4 -- I4 -|    |- O4
- *  Q5 -|    |- STCP    | Q5 -- I5 -|    |- O5
- *  Q6 -|    |- SHCP    | Q6 -- I6 -|    |- O6
- *  Q7 -|    |- MR      | Q7 -- I7 -|    |- O7
- * GND -|____|- Q7'     | Q8 -- I8 -|    |- O8
- *                      | GND--GND -|____|- COMMON
+ *  Q1 -|o   |- VCC     | Q0 -- I1 -|o   |- O1
+ *  Q2 -|    |- Q0      | Q1 -- I2 -|    |- O2
+ *  Q3 -|    |- DS      | Q2 -- I3 -|    |- O3
+ *  Q4 -|    |- OE      | Q3 -- I4 -|    |- O4
+ *  Q5 -|    |- STCP    | Q4 -- I5 -|    |- O5
+ *  Q6 -|    |- SHCP    | Q5 -- I6 -|    |- O6
+ *  Q7 -|    |- MR      | Q6 -- I7 -|    |- O7
+ * GND -|____|- Q7'     | Q7 -- I8 -|    |- O8
+ *                      | GND--GND -|____|- COMMON -- VCC
  *
  * Q0-Q7 -- parallel output
  * DS -- dataPin, serial input
@@ -46,10 +46,10 @@
 // Default it is uint8_t(only can be 0, 1, 2 or 3), you may want
 // to set int16_t to storage current step since you can use HOME
 // command to zero all motors.
+#ifndef stepType
 // #define stepType uint8_t
 #define stepType int
-
-// #define arrayLen(array) sizeof(array)/sizeof(array[0])
+#endif
 
 class Hundred_Steppers
 {
